@@ -56,4 +56,4 @@ def export_bone_animation_to_json(filepath):
 
 
 
-export_bone_animation_to_json('C:\\"Core Animation Pipeline"\\"JSON Dumps"\\' + datetime.today().strftime('%m_%d_%Y__%H_%M_%S'))
+export_bone_animation_to_json('C:\\"Core Animation Pipeline"\\"JSON Dumps"\\' + datetime.today().strftime('%m_%d_%Y__%H_%M_%S') + ".json")
