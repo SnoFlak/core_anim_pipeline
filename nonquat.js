@@ -58,10 +58,8 @@ async function convertJSON() {
         })
 
         const writeLine = (line) => animationFile.write(`${line}\n`);
-        writeLine("-- BLENDER TO CORE ANIMATION CONVERSION CREATED BY: MATHIAS SLETTEN (SnoFlak)");
-        writeLine(`-- ANIMATION NAME: ${animationName}`);
-        writeLine(`-- CREATED ON: ${new Date()}`);
-        writeLine("\nlocal scaler = 1")
+        selfStamp(writeLine, animationName);
+        writeLine("\nlocal scaler = 1"); //internal lua script usage for playback speed inside of Core
         writeLine(`function ${animationName}()`);
 
         const frameScalar = 0.016667 // given the player is reaching 60fps
@@ -69,7 +67,7 @@ async function convertJSON() {
         // loop through keyframes
         for (let i = 0; i < keyframes.length; i++) {
             let keyframeRef = keyframes[i]
-            writeLine(`\t-- KEYFRAME: ${keyframeRef}`)
+            // writeLine(`\t-- KEYFRAME: ${keyframeRef}`)
 
             //loop through bones
             for (let j = 0; j < dataStore.length; j++) {
@@ -145,16 +143,22 @@ async function convertJSON() {
                 writeLine(`\tTask.Wait(${timeDiff} * scaler)`);
             }
         }
+
         writeLine("\t");
         writeLine("\treturn true")
         writeLine("\t");
-
         writeLine("end");
 
         animationFile.end()
     } catch (e) {
         console.error(e);
     }
+}
+
+function selfStamp(writeLine, animationName) {
+    writeLine("-- BLENDER TO CORE ANIMATION CONVERSION CREATED BY: MATHIAS SLETTEN (SnoFlak)");
+    writeLine(`-- ANIMATION NAME: ${animationName}`);
+    writeLine(`-- CREATED ON: ${new Date()}`);
 }
 
 convertJSON()

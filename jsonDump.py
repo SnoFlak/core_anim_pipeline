@@ -1,5 +1,6 @@
 import bpy
 import json
+from datetime import datetime
 
 def round_small_values(value, threshold=1e-6):
     return 0.0 if abs(value) < threshold else value
@@ -28,11 +29,11 @@ def get_bone_keyframe_data(action):
                         keyframe_data[bone_name]['location'][frame] = [None, None, None]
                     keyframe_data[bone_name]['location'][frame][index] = value
                 
-                elif property_name == 'rotation_quaternion':
-                    index = fcurve.array_index
-                    if frame not in keyframe_data[bone_name]['rotation_quaternion']:
-                        keyframe_data[bone_name]['rotation_quaternion'][frame] = [None, None, None, None]
-                    keyframe_data[bone_name]['rotation_quaternion'][frame][index] = value
+                # elif property_name == 'rotation_quaternion':
+                #     index = fcurve.array_index
+                #     if frame not in keyframe_data[bone_name]['rotation_quaternion']:
+                #         keyframe_data[bone_name]['rotation_quaternion'][frame] = [None, None, None, None]
+                #     keyframe_data[bone_name]['rotation_quaternion'][frame][index] = value
                     
                 elif property_name == 'rotation_euler':
                     value = radians_to_degrees(value)
@@ -53,5 +54,6 @@ def export_bone_animation_to_json(filepath):
     with open(filepath, 'w') as f:
         json.dump(data, f, indent=4)
 
-# Export to the desired file path
-export_bone_animation_to_json('Z:/Core Shenanigans/DemonEulerRotations.json')
+
+
+export_bone_animation_to_json('C:\\"Core Animation Pipeline"\\"JSON Dumps"\\' + datetime.today().strftime('%m_%d_%Y__%H_%M_%S'))
