@@ -28,12 +28,6 @@ def get_bone_keyframe_data(action):
                     if frame not in keyframe_data[bone_name]['location']:
                         keyframe_data[bone_name]['location'][frame] = [None, None, None]
                     keyframe_data[bone_name]['location'][frame][index] = value
-                
-                # elif property_name == 'rotation_quaternion':
-                #     index = fcurve.array_index
-                #     if frame not in keyframe_data[bone_name]['rotation_quaternion']:
-                #         keyframe_data[bone_name]['rotation_quaternion'][frame] = [None, None, None, None]
-                #     keyframe_data[bone_name]['rotation_quaternion'][frame][index] = value
                     
                 elif property_name == 'rotation_euler':
                     value = radians_to_degrees(value)
