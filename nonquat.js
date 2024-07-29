@@ -2,7 +2,7 @@ const fs = require('fs');
 
 const args = process.argv.slice(2);
 if (args.length !== 2) {
-    console.error('Usage: node index.js <animationName> <jsonFilePath>');
+    console.error('Usage: node nonquat.js <animationName> <jsonFilePath>');
     process.exit(1);
 }
 
