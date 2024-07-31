@@ -5,7 +5,7 @@ import convertBoneDataToPBTObject from './utils/BonePBT.js';
 
 const args = process.argv.slice(2);
 if (args.length !== 2) {
-    console.error('Usage: node buildRig.js <rigName> <jsonFilePath>');
+    console.error('Usage: node rigify.js <rigName> <jsonFilePath>');
     process.exit(1);
 }
 
