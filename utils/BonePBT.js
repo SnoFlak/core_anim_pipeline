@@ -1,4 +1,4 @@
-function convertBoneDataToPBTObject(boneData) {
+export default function convertBoneDataToPBTObject(boneData) {
     let result = "";
     let tabs = "\t\t\t"; //3 by default to start off the PBT Object
     let newLine = "\n";

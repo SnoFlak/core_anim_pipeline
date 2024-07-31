@@ -21,3 +21,5 @@ class ArtGroup {
         this.children = children;
     }
 }
+
+export { BoneData, ArtGroup };

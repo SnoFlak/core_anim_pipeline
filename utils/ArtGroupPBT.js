@@ -1,4 +1,4 @@
-function convertArtGroupToPBTObject(artGroup) {
+export default function convertArtGroupToPBTObject(artGroup) {
     let result = "";
     let tabs = "\t\t\t"; //3 by default to start off the PBT Object
     let newLine = "\n";
