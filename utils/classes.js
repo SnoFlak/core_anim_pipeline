@@ -22,4 +22,11 @@ class ArtGroup {
     }
 }
 
-export { BoneData, ArtGroup };
+class Sphere {
+    constructor(id, parentID) {
+        this.id = id;
+        this.parentID = parentID;
+    }
+}
+
+export { BoneData, ArtGroup, Sphere };
