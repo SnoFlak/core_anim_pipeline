@@ -1,82 +1,83 @@
-export default function convertSphereDataToPBTObject(sphereData) {
+export function convertSphereDataToPBTObject(sphereData) {
     let result = "";
-    let tabs = "\t\t\t"; //3 by default to start off the PBT Object
+    let tabs = "      "; //3 by default to start off the PBT Object
     let newLine = "\n";
 
     result += tabs + "Objects {" + newLine;
-    result += tabs + `\tId: ${parseInt(sphereData.id)}` + newLine;
-    result += tabs + 'Name: "Sphere"' + newLine;
+    result += tabs + `  Id: ${sphereData.id}` + newLine;
+    result += tabs + '  Name: "Sphere"' + newLine;
     //Transform
-    result += tabs + "\tTransform {" + newLine;
+    result += tabs + "  Transform {" + newLine;
         // Location
-    result += tabs + "\t\tLocation {" + newLine;
-    result += tabs + "\t\t}" + newLine;
+    result += tabs + "    Location {" + newLine;
+    result += tabs + "    }" + newLine;
         // Rotation
-    result += tabs + "\t\tRotation {" + newLine;
-    result += tabs + "\t\t}" + newLine;
+    result += tabs + "    Rotation {" + newLine;
+    result += tabs + "    }" + newLine;
         // Scale
-    result += tabs + "\t\tScale{" + newLine;
-    result += tabs + "\t\t\tX: 0.15" + newLine;
-    result += tabs + "\t\t\tY: 0.15" + newLine;
-    result += tabs + "\t\t\tZ: 0.15" + newLine;
-    result += tabs + "\t\t}" + newLine;
-    result += tabs + "\t}" + newLine;
+    result += tabs + "    Scale{" + newLine;
+    result += tabs + "      X: 0.15" + newLine;
+    result += tabs + "      Y: 0.15" + newLine;
+    result += tabs + "      Z: 0.15" + newLine;
+    result += tabs + "    }" + newLine;
+    result += tabs + "  }" + newLine;
     // Parent
-    result += tabs + `\tParentId: ${sphereData.parentID}` + newLine;
+    result += tabs + `  ParentId: ${sphereData.parentID}` + newLine;
     // Extra Settings
-    result += tabs + "\tCollidable_v2 {" + newLine;
-    result += tabs + '\t\tValue: "mc:ecollisionsetting:inheritfromparent"' + newLine;
-    result += tabs + "\t}" + newLine;
-    result += tabs + "\tVisible_v2 {" + newLine;
-    result += tabs + '\t\tValue: "mc:evisibilitysetting:inheritfromparent"' + newLine;
-    result += tabs + "\t}" + newLine;
-    result += tabs + "\tCameraCollidable {" + newLine;
-    result += tabs + '\t\tValue: "mc:ecollisionsetting:inheritfromparent"' + newLine;
-    result += tabs + "\t}" + newLine;
-    result += tabs + "\tEditorIndicatorVisibility {" + newLine;
-    result += tabs + '\t\tValue: "mc:eindicatorvisibility:visiblewhenselected"' + newLine;
-    result += tabs + "\t}" + newLine;
-    result += tabs + "\tCoreMesh {" + newLine;
-    result += tabs + "\t\tMeshAsset {" + newLine;
-    result += tabs + "\t\t\tId: 17995620016234935586" + newLine;
-    result += tabs + "\t\t}" + newLine;
-    result += tabs + "\t\tTeams {" + newLine;
-    result += tabs + "\t\t\tIsTeamCollisionEnabled: true" + newLine;
-    result += tabs + "\t\t\tIsEnemyCollisionEnabled: true" + newLine;
-    result += tabs + "\t\t}" + newLine;
-    result += tabs + "\t\tStaticMesh {" + newLine;
-    result += tabs + "\t\t\tPhysics {" + newLine;
-    result += tabs + "\t\t\t\tMass: 100" + newLine;
-    result += tabs + "\t\t\t\tLinearDamping: 0.01" + newLine;
-    result += tabs + "\t\t\t}" + newLine;
-    result += tabs + "\t\t\tBoundsScale: 1" + newLine;
-    result += tabs + "\t\t}" + newLine;
-    result += tabs + "\t}" + newLine;
-    result += tabs + "\tRelevance {" + newLine;
-    result += tabs + '\t\tValue: "mc:edistancerelevance:critical"' + newLine;
-    result += tabs + "\t}" + newLine;
-    result += tabs + "\tNetworkRelevanceDistance {" + newLine;
-    result += tabs + '\t\tValue: "mc:eproxyrelevance:critical"' + newLine;
-    result += tabs + "\t}" + newLine;
-    result += tabs + "\tIsReplicationEnabledByDefault: true" + newLine;
+    result += tabs + "  Collidable_v2 {" + newLine;
+    result += tabs + '    Value: "mc:ecollisionsetting:inheritfromparent"' + newLine;
+    result += tabs + "  }" + newLine;
+    result += tabs + "  Visible_v2 {" + newLine;
+    result += tabs + '    Value: "mc:evisibilitysetting:inheritfromparent"' + newLine;
+    result += tabs + "  }" + newLine;
+    result += tabs + "  CameraCollidable {" + newLine;
+    result += tabs + '    Value: "mc:ecollisionsetting:inheritfromparent"' + newLine;
+    result += tabs + "  }" + newLine;
+    result += tabs + "  EditorIndicatorVisibility {" + newLine;
+    result += tabs + '    Value: "mc:eindicatorvisibility:visiblewhenselected"' + newLine;
+    result += tabs + "  }" + newLine;
+    result += tabs + "  CoreMesh {" + newLine;
+    result += tabs + "    MeshAsset {" + newLine;
+    result += tabs + "      Id: 17995620016234935586" + newLine;
+    result += tabs + "    }" + newLine;
+    result += tabs + "    Teams {" + newLine;
+    result += tabs + "      IsTeamCollisionEnabled: true" + newLine;
+    result += tabs + "      IsEnemyCollisionEnabled: true" + newLine;
+    result += tabs + "    }" + newLine;
+    result += tabs + "    StaticMesh {" + newLine;
+    result += tabs + "      Physics {" + newLine;
+    result += tabs + "        Mass: 100" + newLine;
+    result += tabs + "        LinearDamping: 0.01" + newLine;
+    result += tabs + "      }" + newLine;
+    result += tabs + "      BoundsScale: 1" + newLine;
+    result += tabs + "    }" + newLine;
+    result += tabs + "  }" + newLine;
+    result += tabs + "  Relevance {" + newLine;
+    result += tabs + '    Value: "mc:edistancerelevance:critical"' + newLine;
+    result += tabs + "  }" + newLine;
+    result += tabs + "  NetworkRelevanceDistance {" + newLine;
+    result += tabs + '    Value: "mc:eproxyrelevance:critical"' + newLine;
+    result += tabs + "  }" + newLine;
+    result += tabs + "  IsReplicationEnabledByDefault: true" + newLine;
     result += tabs + "}" + newLine;
 
     return result;
 }
 
-export default function addSphereAssetToPBT() {
+export function addSphereAssetToPBT() {
     let result = "";
-    let tabs = "\t\t" //2 for where assets need to sit outside of the Object Block
+    let tabs = "    " //2 for where assets need to sit outside of the Object Block
     let newLine = "\n";
 
+    result += tabs + "}" + newLine; // Closes off the Object Blocks Block
     result += tabs + "Assets {" + newLine;
-    result += tabs + "\tId: 17995620016234935586" + newLine;
-    result += tabs + '\tName: "Sphere"' + newLine;
-    result += tabs + "\tPlatformAsssetType: 1" + newLine;
-    result += tabs + "\tPrimaryAsset {" + newLine;
-    result += tabs + '\t\tAssetType: "StaticMeshAssetRef"' + newLine;
-    result += tabs + '\t\tAssetId: "sm_sphere_002"' + newLine;
-    result += tabs + "\t}" + newLine;
+    result += tabs + "  Id: 17995620016234935586" + newLine;
+    result += tabs + '  Name: "Sphere"' + newLine;
+    result += tabs + "  PlatformAsssetType: 1" + newLine;
+    result += tabs + "  PrimaryAsset {" + newLine;
+    result += tabs + '    AssetType: "StaticMeshAssetRef"' + newLine;
+    result += tabs + '    AssetId: "sm_sphere_002"' + newLine;
+    result += tabs + "  }" + newLine;
     result += tabs + "}" + newLine;
 
     return result;

@@ -1,8 +1,8 @@
-const fs = require('fs');
-import {BoneData, ArtGroup, Sphere} from './util/classes.js';
+import fs from 'fs';
+import {BoneData, ArtGroup, Sphere} from './utils/classes.js';
 import convertArtGroupToPBTObject from './utils/ArtGroupPBT.js';
 import convertBoneDataToPBTObject from './utils/BonePBT.js';
-import convertSphereDataToPBTObject from './utils/SpherePBT.js';
+import {convertSphereDataToPBTObject, addSphereAssetToPBT} from './utils/SpherePBT.js';
 import {initializePBTFile, closePBTFile} from './utils/pbtInit.js';
 
 const args = process.argv.slice(2);
@@ -41,8 +41,29 @@ function makeID() {
     return result;
 }
 
+// const writeBoneDataByIndex = (writeLine, bones, index) => {
+//     let selectedBone = bones[index];
+//     let data = convertBoneDataToPBTObject(selectedBone);
+//     writeLine(data);
+// }
+
+// const writeArtGroupDataByIndex = (writeLine, artGroups, index) => {
+//         let selectedArtGroup = artGroups[index];
+//         let data = convertArtGroupToPBTObject(selectedArtGroup);
+//         writeLine(data);
+// }
+
+// const writeSphereDataByIndex = (writeLine, spheres, index) => {
+//     for(let i = 0; i <= spheres.length - 1; i++) {
+//         let selectedSphere = spheres[index];
+//         let data = convertSphereDataToPBTObject(selectedSphere);
+//         writeLine(data);
+//     }
+// }
+
 const writeBoneData = (writeLine, bones) => {
     for(let i = 0; i <= bones.length - 1; i++) {
+        console.log("COUNT: " + i + " / TOTAL SIZE OF bones[]: " + bones.length);
         let selectedBone = bones[i];
         let data = convertBoneDataToPBTObject(selectedBone);
         writeLine(data);
@@ -51,24 +72,25 @@ const writeBoneData = (writeLine, bones) => {
 
 const writeArtGroupData = (writeLine, artGroups) => {
     for(let i = 0; i <= artGroups.length - 1; i++) {
+        console.log("COUNT: " + i + " / TOTAL SIZE OF artGroups[]: " + artGroups.length);
         let selectedArtGroup = artGroups[i];
         let data = convertArtGroupToPBTObject(selectedArtGroup);
         writeLine(data);
     }
 }
 
-const writeSphereData = (writeLine, spheres) => {
-    for(let i = 0; i <= spheres.length - 1; i++) {
-        let selectedSphere = spheres[i];
-        let data = convertSphereDataToPBTObject(selectedSphere);
-        writeLine(data);
-    }
-}
+// const writeSphereData = (writeLine, spheres) => {
+//     for(let i = 0; i <= spheres.length - 1; i++) {
+//         console.log("COUNT: " + i + " / TOTAL SIZE OF spheres[]: " + spheres.length);
+//         let selectedSphere = spheres[i];
+//         let data = convertSphereDataToPBTObject(selectedSphere);
+//         writeLine(data);
+//     }
+// }
 
 async function convertJSON() {
     try {
         const jsonObject = await readJSONFile();
-        const parentGroupID = makeID();
         const rigObject = {};
 
         let bones = [];
@@ -80,14 +102,11 @@ async function convertJSON() {
             let boneData = jsonObject[i];
             let itemID = makeID();
 
-            // let customIdent = i + 1 < 10 ? `0${i + 1}` : `${i + 1}`;
-
             rigObject[`${boneData.name}`] = {
                 "name": boneData.name,
                 "head": boneData.head,
                 "tail": boneData.tail,
                 "parent": boneData.parent,
-                // "itemID": (itemID + customIdent),
                 "itemID": itemID
             }
 
@@ -134,42 +153,47 @@ async function convertJSON() {
         let rigObjectValues = Object.values(rigObject);
 
         //loop through each value in rigObject and set up the Bone Objects
-        for (let i = 0; i < rigObjectValues.length() - 1; i++) {
-            let sB = rigObjectValues[i]; //selectedBone
+        for (let i = 0; i < rigObjectValues.length; i++) {
+            let selectedBone = rigObjectValues[i]; //selectedBone
+            let rigBone = rigObject[`${selectedBone.name}`];
 
-            let newBoneObject = new BoneData(sB.id, sB.name, sB.locs.x, sB.locs.y, sB.locs.z, 0,0,0, parseInt(sB.parent), sB.children)
+            let newBoneObject = new BoneData(rigBone.itemID, rigBone.name, rigBone.locs.x, rigBone.locs.y, rigBone.locs.z, 0,0,0, rigBone.parentID, rigBone.childrenIDs)
             
             //create art group
             let artGroupID = makeID();
-            let artGroupChildren = [];
+            // let artGroupChildren = [];
             let newArtGroup = new ArtGroup(artGroupID, "Art", newBoneObject.id)
 
             //create sphere
-            let sphereID = makeID();
-            let newSphere = new Sphere(sphereID, artGroupID);
+            // let sphereID = makeID();
+            // let newSphere = new Sphere(sphereID, artGroupID);
 
             //add sphere to art group children
-            artGroupChildren.push(sphereID);
+            // artGroupChildren.push(sphereID);
+            // newArtGroup.children = artGroupChildren;
 
             //add art group to children
-            newBoneObject.children.push(artGroupID);
+            // newBoneObject.children.push(artGroupID);
             
             //add all objects to their arrays
             bones.push(newBoneObject);
             artGroups.push(newArtGroup);
-            spheres.push(newSphere);
+            // spheres.push(newSphere);
         }
 
-        CreateFile(rigObject, bones, artGroups, spheres);
+        //create ROOT container group folder
+        let parentGroup = new BoneData(makeID(), rigName, 0,0,0,0,0,0, "4781671109827199097", [bones[0].id])
+        bones[0].parentID = parentGroup.id;
+
+        CreateFile(parentGroup, bones, artGroups, spheres);
 
     } catch(e) {
         console.error(e);
     }
 }
 
-async function CreateFile(rigObject, bones, artGroups, spheres) {
+async function CreateFile(parentGroup, bones, artGroups, spheres) {
     try {
-        let listOfData = Object.values(rigObject);
 
         let rigPBTFile = fs.createWriteStream(`${rigName}.pbt`, {
             flags: 'a'
@@ -177,20 +201,28 @@ async function CreateFile(rigObject, bones, artGroups, spheres) {
 
         const writeLine = (line) => rigPBTFile.write(`${line}`);
 
-        let pbtInit = initializePBTFile(makeID(), rigName, parentGroupID, listOfData[0].itemID)
+        let pbtInit = initializePBTFile(makeID(), parentGroup)
         writeLine(pbtInit);
+
+        // for(let i = 0; i <= bones.length - 1; i++) {
+        //     writeBoneDataByIndex(writeLine, bones, i);
+        //     writeArtGroupDataByIndex(writeLine, artGroups, i);
+        //     writeSphereDataByIndex(writeLine, spheres, i);
+        // }
 
         //loop through bones and add to file
         writeBoneData(writeLine, bones);
 
         //loop through art groups and add to file
-        writeArtGroupData(writeLine, artGroups);
+        // writeArtGroupData(writeLine, artGroups);
 
         //loop through spheres and add to file
-        writeSphereData(writeLine, spheres);
+        // writeSphereData(writeLine, spheres);
 
-        let sphereAsset = addSphereAssetToPBT();
-        writeLine(sphereAsset);
+        // let sphereAsset = addSphereAssetToPBT();
+        // writeLine(sphereAsset);
+
+        writeLine("    }\n");
 
         let closing = closePBTFile();
         writeLine(closing);

@@ -1,59 +1,60 @@
 export default function convertBoneDataToPBTObject(boneData) {
     let result = "";
-    let tabs = "\t\t\t"; //3 by default to start off the PBT Object
+    let tabs = "      "; //3 by default to start off the PBT Object
     let newLine = "\n";
 
     result += tabs + "Objects {" + newLine;
-    result += tabs + `\tId: ${parseInt(boneData.id)}` + newLine;
-    result += tabs + `\tName: ${boneData.name}` + newLine;
+    result += tabs + `  Id: ${boneData.id}` + newLine;
+    result += tabs + `  Name: "${boneData.name}"` + newLine;
     //Transform
-    result += tabs + "\tTransform {" + newLine;
+    result += tabs + "  Transform {" + newLine;
         // Location
-    result += tabs + "\t\tLocation {" + newLine;
-    result += tabs + `\t\t\tX: ${boneData.lx}` + newLine;
-    result += tabs + `\t\t\tY: ${boneData.ly}` + newLine;
-    result += tabs + `\t\t\tZ: ${boneData.lz}` + newLine;
-    result += tabs + "\t\t}" + newLine;
+    result += tabs + "    Location {" + newLine;
+    result += tabs + `      X: ${boneData.lx}` + newLine;
+    result += tabs + `      Y: ${boneData.ly}` + newLine;
+    result += tabs + `      Z: ${boneData.lz}` + newLine;
+    result += tabs + "    }" + newLine;
         // Rotation
-    result += tabs + "\t\tRotation {" + newLine;
-    result += tabs + `\t\t\tPitch: ${boneData.rx}` + newLine;
-    result += tabs + `\t\t\tYaw: ${boneData.ry}` + newLine;
-    result += tabs + `\t\t\tRoll: ${boneData.rz}` + newLine;
-    result += tabs + "\t\t}" + newLine;
+    result += tabs + "    Rotation {" + newLine;
+    // result += tabs + `\t\t\tPitch: ${boneData.rx}` + newLine;
+    // result += tabs + `\t\t\tYaw: ${boneData.ry}` + newLine;
+    // result += tabs + `\t\t\tRoll: ${boneData.rz}` + newLine;
+    result += tabs + "    }" + newLine;
         // Scale
-    result += tabs + "\t\tScale{" + newLine;
-    result += tabs + "\t\t\tX: 1" + newLine;
-    result += tabs + "\t\t\tY: 1" + newLine;
-    result += tabs + "\t\t\tZ: 1" + newLine;
-    result += tabs + "\t\t}" + newLine;
-    result += tabs + "\t}" + newLine;
+    result += tabs + "    Scale{" + newLine;
+    result += tabs + "      X: 1" + newLine;
+    result += tabs + "      Y: 1" + newLine;
+    result += tabs + "      Z: 1" + newLine;
+    result += tabs + "    }" + newLine;
+    result += tabs + "  }" + newLine;
     
     // Parent and Children
-    result += tabs + `\tParentId: ${boneData.parentID == undefined ? "" : parseInt(boneData.parentID)}` + newLine;
+    result += tabs + `  ParentId: ${boneData.parentID == undefined || 0 ? "4781671109827199097" : boneData.parentID}` + newLine;
 
-    for (let i = 0; i < boneData.children.length - 1; i++) {
-        result += tabs + `\tChildIds: ${parseInt(boneData.children[i])}` + newLine;
+    for (let i = 0; i <= boneData.children.length - 1; i++) {
+        result += tabs + `  ChildIds: ${boneData.children[i]}` + newLine;
     }
 
     // Extra Settings
-    result += tabs + "\tCollidable_v2 {" + newLine;
-    result += tabs + '\t\tValue: "mc:ecollisionsetting:inheritfromparent"' + newLine;
-    result += tabs + "\t}" + newLine;
-    result += tabs + "\tVisible_v2 {" + newLine;
-    result += tabs + '\t\tValue: "mc:evisibilitysetting:inheritfromparent"' + newLine;
-    result += tabs + "\t}" + newLine;
-    result += tabs + "\tCameraCollidable {" + newLine;
-    result += tabs + '\t\tValue: "mc:ecollisionsetting:inheritfromparent"' + newLine;
-    result += tabs + "\t}" + newLine;
-    result += tabs + "\tEditorIndicatorVisibility {" + newLine;
-    result += tabs + '\t\tValue: "mc:eindicatorvisibility:visiblewhenselected"' + newLine;
-    result += tabs + "\t}" + newLine;
-    result += tabs + "\tFolder {" + newLine;
-    result += tabs + '\t\tIsGroup: true' + newLine;
-    result += tabs + "\t}" + newLine;
-    result += tabs + "\tNetworkRelevanceDistance {" + newLine;
-    result += tabs + '\t\tValue: "mc:eproxyrelevance:critical"' + newLine;
-    result += tabs + "\t}" + newLine;
+    result += tabs + "  Collidable_v2 {" + newLine;
+    result += tabs + '    Value: "mc:ecollisionsetting:inheritfromparent"' + newLine;
+    result += tabs + "  }" + newLine;
+    result += tabs + "  Visible_v2 {" + newLine;
+    result += tabs + '    Value: "mc:evisibilitysetting:inheritfromparent"' + newLine;
+    result += tabs + "  }" + newLine;
+    result += tabs + "  CameraCollidable {" + newLine;
+    result += tabs + '    Value: "mc:ecollisionsetting:inheritfromparent"' + newLine;
+    result += tabs + "  }" + newLine;
+    result += tabs + "  EditorIndicatorVisibility {" + newLine;
+    result += tabs + '    Value: "mc:eindicatorvisibility:visiblewhenselected"' + newLine;
+    result += tabs + "  }" + newLine;
+    result += tabs + "  Folder {" + newLine;
+    result += tabs + '    IsGroup: true' + newLine;
+    result += tabs + "  }" + newLine;
+    result += tabs + "  NetworkRelevanceDistance {" + newLine;
+    result += tabs + '    Value: "mc:eproxyrelevance:critical"' + newLine;
+    result += tabs + "  }" + newLine;
+    result += tabs + "  IsReplicationEnabledByDefault: true" + newLine;
     result += tabs + "}" + newLine;
 
     return result;
