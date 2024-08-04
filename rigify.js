@@ -110,6 +110,7 @@ async function convertJSON() {
                 "itemID": itemID
             }
 
+            // set initial baseline locations
             let locationDiffs = {"x": 0, "y": 0, "z": 0};
 
             locationDiffs.x = (boneData.tail.x - boneData.head.x) * 10;
@@ -117,6 +118,25 @@ async function convertJSON() {
             locationDiffs.z = (boneData.tail.z - boneData.head.z) * 10;
 
             rigObject[`${boneData.name}`].locs = locationDiffs;
+        }
+
+        //loop through rigObject bones and verify the locations based on parent bone tail location. If they don't match, fix locations
+        let rigObjectVals = Object.values(rigObject);
+
+        for (let i = 0; i < jsonObject.length; i++) {
+            let boneData = rigObject[`${rigObjectVals[i].name}`];
+
+            if (boneData.parent != null) {
+                let parentBone = rigObject[`${boneData.parent}`];
+                // if (parentBone.tail.x != boneData.head.x || parentBone.tail.y != boneData.head.y || parentBone.tail.z != boneData.head.z) {
+                //     boneData.locs.x = (parentBone.tail.x - boneData.head.x) * 10;
+                //     boneData.locs.y = (parentBone.tail.y- boneData.head.y) * 10;
+                //     boneData.locs.z = (parentBone.tail.z - boneData.head.z) * 10;
+                // }
+                    boneData.locs.x = (parentBone.head.x - boneData.head.x) * 10;
+                    boneData.locs.y = (parentBone.head.y- boneData.head.y) * 10;
+                    boneData.locs.z = (parentBone.head.z - boneData.head.z) * -10;
+            }
         }
 
         //loop through jsonObject again to grab children id's since its properly set up now
