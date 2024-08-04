@@ -79,14 +79,14 @@ const writeArtGroupData = (writeLine, artGroups) => {
     }
 }
 
-// const writeSphereData = (writeLine, spheres) => {
-//     for(let i = 0; i <= spheres.length - 1; i++) {
-//         console.log("COUNT: " + i + " / TOTAL SIZE OF spheres[]: " + spheres.length);
-//         let selectedSphere = spheres[i];
-//         let data = convertSphereDataToPBTObject(selectedSphere);
-//         writeLine(data);
-//     }
-// }
+const writeSphereData = (writeLine, spheres) => {
+    for(let i = 0; i <= spheres.length - 1; i++) {
+        // console.log("COUNT: " + i + " / TOTAL SIZE OF spheres[]: " + spheres.length);
+        let selectedSphere = spheres[i];
+        let data = convertSphereDataToPBTObject(selectedSphere);
+        writeLine(data);
+    }
+}
 
 async function convertJSON() {
     try {
@@ -117,7 +117,6 @@ async function convertJSON() {
             locationDiffs.z = (boneData.tail.z - boneData.head.z) * 10;
 
             rigObject[`${boneData.name}`].locs = locationDiffs;
-
         }
 
         //loop through jsonObject again to grab children id's since its properly set up now
@@ -161,16 +160,15 @@ async function convertJSON() {
             
             //create art group
             let artGroupID = makeID();
-            // let artGroupChildren = [];
-            let newArtGroup = new ArtGroup(artGroupID, "Art", newBoneObject.id, []);
+            let artGroupChildren = [];
+            let newArtGroup = new ArtGroup(artGroupID, "Art", newBoneObject.id, artGroupChildren);
 
             //create sphere
-            // let sphereID = makeID();
-            // let newSphere = new Sphere(sphereID, artGroupID);
+            let sphereID = makeID();
+            let newSphere = new Sphere(sphereID, artGroupID);
 
             //add sphere to art group children
-            // artGroupChildren.push(sphereID);
-            // newArtGroup.children = artGroupChildren;
+            newArtGroup.children.push(sphereID);
 
             //add art group to children
             newBoneObject.children.push(artGroupID);
@@ -178,7 +176,7 @@ async function convertJSON() {
             //add all objects to their arrays
             bones.push(newBoneObject);
             artGroups.push(newArtGroup);
-            // spheres.push(newSphere);
+            spheres.push(newSphere);
         }
 
         //create ROOT container group folder
@@ -204,12 +202,6 @@ async function CreateFile(parentGroup, bones, artGroups, spheres) {
         let pbtInit = initializePBTFile(makeID(), parentGroup)
         writeLine(pbtInit);
 
-        // for(let i = 0; i <= bones.length - 1; i++) {
-        //     writeBoneDataByIndex(writeLine, bones, i);
-        //     writeArtGroupDataByIndex(writeLine, artGroups, i);
-        //     writeSphereDataByIndex(writeLine, spheres, i);
-        // }
-
         //loop through bones and add to file
         writeBoneData(writeLine, bones);
 
@@ -217,12 +209,12 @@ async function CreateFile(parentGroup, bones, artGroups, spheres) {
         writeArtGroupData(writeLine, artGroups);
 
         //loop through spheres and add to file
-        // writeSphereData(writeLine, spheres);
+        writeSphereData(writeLine, spheres);
 
-        // let sphereAsset = addSphereAssetToPBT();
-        // writeLine(sphereAsset);
+        writeLine("    }\n"); // Close the ObjectBlock off
 
-        writeLine("    }\n");
+        let sphereAsset = addSphereAssetToPBT();
+        writeLine(sphereAsset);
 
         let closing = closePBTFile();
         writeLine(closing);

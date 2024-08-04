@@ -15,7 +15,7 @@ export default function convertArtGroupToPBTObject(artGroup) {
     result += tabs + "    Rotation {" + newLine;
     result += tabs + "    }" + newLine;
         // Scale
-    result += tabs + "    Scale{" + newLine;
+    result += tabs + "    Scale {" + newLine;
     result += tabs + "      X: 1" + newLine;
     result += tabs + "      Y: 1" + newLine;
     result += tabs + "      Z: 1" + newLine;

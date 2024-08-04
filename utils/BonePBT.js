@@ -21,7 +21,7 @@ export default function convertBoneDataToPBTObject(boneData) {
     // result += tabs + `\t\t\tRoll: ${boneData.rz}` + newLine;
     result += tabs + "    }" + newLine;
         // Scale
-    result += tabs + "    Scale{" + newLine;
+    result += tabs + "    Scale {" + newLine;
     result += tabs + "      X: 1" + newLine;
     result += tabs + "      Y: 1" + newLine;
     result += tabs + "      Z: 1" + newLine;

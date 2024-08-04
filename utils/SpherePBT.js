@@ -15,7 +15,7 @@ export function convertSphereDataToPBTObject(sphereData) {
     result += tabs + "    Rotation {" + newLine;
     result += tabs + "    }" + newLine;
         // Scale
-    result += tabs + "    Scale{" + newLine;
+    result += tabs + "    Scale {" + newLine;
     result += tabs + "      X: 0.15" + newLine;
     result += tabs + "      Y: 0.15" + newLine;
     result += tabs + "      Z: 0.15" + newLine;
@@ -69,11 +69,10 @@ export function addSphereAssetToPBT() {
     let tabs = "    " //2 for where assets need to sit outside of the Object Block
     let newLine = "\n";
 
-    result += tabs + "}" + newLine; // Closes off the Object Blocks Block
     result += tabs + "Assets {" + newLine;
     result += tabs + "  Id: 17995620016234935586" + newLine;
     result += tabs + '  Name: "Sphere"' + newLine;
-    result += tabs + "  PlatformAsssetType: 1" + newLine;
+    result += tabs + "  PlatformAssetType: 1" + newLine;
     result += tabs + "  PrimaryAsset {" + newLine;
     result += tabs + '    AssetType: "StaticMeshAssetRef"' + newLine;
     result += tabs + '    AssetId: "sm_sphere_002"' + newLine;
