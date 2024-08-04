@@ -63,7 +63,7 @@ function makeID() {
 
 const writeBoneData = (writeLine, bones) => {
     for(let i = 0; i <= bones.length - 1; i++) {
-        console.log("COUNT: " + i + " / TOTAL SIZE OF bones[]: " + bones.length);
+        // console.log("COUNT: " + i + " / TOTAL SIZE OF bones[]: " + bones.length);
         let selectedBone = bones[i];
         let data = convertBoneDataToPBTObject(selectedBone);
         writeLine(data);
@@ -72,7 +72,7 @@ const writeBoneData = (writeLine, bones) => {
 
 const writeArtGroupData = (writeLine, artGroups) => {
     for(let i = 0; i <= artGroups.length - 1; i++) {
-        console.log("COUNT: " + i + " / TOTAL SIZE OF artGroups[]: " + artGroups.length);
+        // console.log("COUNT: " + i + " / TOTAL SIZE OF artGroups[]: " + artGroups.length);
         let selectedArtGroup = artGroups[i];
         let data = convertArtGroupToPBTObject(selectedArtGroup);
         writeLine(data);
@@ -162,7 +162,7 @@ async function convertJSON() {
             //create art group
             let artGroupID = makeID();
             // let artGroupChildren = [];
-            let newArtGroup = new ArtGroup(artGroupID, "Art", newBoneObject.id)
+            let newArtGroup = new ArtGroup(artGroupID, "Art", newBoneObject.id, []);
 
             //create sphere
             // let sphereID = makeID();
@@ -173,7 +173,7 @@ async function convertJSON() {
             // newArtGroup.children = artGroupChildren;
 
             //add art group to children
-            // newBoneObject.children.push(artGroupID);
+            newBoneObject.children.push(artGroupID);
             
             //add all objects to their arrays
             bones.push(newBoneObject);
@@ -214,7 +214,7 @@ async function CreateFile(parentGroup, bones, artGroups, spheres) {
         writeBoneData(writeLine, bones);
 
         //loop through art groups and add to file
-        // writeArtGroupData(writeLine, artGroups);
+        writeArtGroupData(writeLine, artGroups);
 
         //loop through spheres and add to file
         // writeSphereData(writeLine, spheres);
