@@ -1,5 +1,6 @@
 import bpy
 import json
+import math
 from datetime import datetime
 
 def round_small_values(value, threshold=1e-6):
