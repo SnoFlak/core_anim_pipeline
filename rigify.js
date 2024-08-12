@@ -41,29 +41,8 @@ function makeID() {
     return result;
 }
 
-// const writeBoneDataByIndex = (writeLine, bones, index) => {
-//     let selectedBone = bones[index];
-//     let data = convertBoneDataToPBTObject(selectedBone);
-//     writeLine(data);
-// }
-
-// const writeArtGroupDataByIndex = (writeLine, artGroups, index) => {
-//         let selectedArtGroup = artGroups[index];
-//         let data = convertArtGroupToPBTObject(selectedArtGroup);
-//         writeLine(data);
-// }
-
-// const writeSphereDataByIndex = (writeLine, spheres, index) => {
-//     for(let i = 0; i <= spheres.length - 1; i++) {
-//         let selectedSphere = spheres[index];
-//         let data = convertSphereDataToPBTObject(selectedSphere);
-//         writeLine(data);
-//     }
-// }
-
 const writeBoneData = (writeLine, bones) => {
     for(let i = 0; i <= bones.length - 1; i++) {
-        // console.log("COUNT: " + i + " / TOTAL SIZE OF bones[]: " + bones.length);
         let selectedBone = bones[i];
         let data = convertBoneDataToPBTObject(selectedBone);
         writeLine(data);
@@ -72,7 +51,6 @@ const writeBoneData = (writeLine, bones) => {
 
 const writeArtGroupData = (writeLine, artGroups) => {
     for(let i = 0; i <= artGroups.length - 1; i++) {
-        // console.log("COUNT: " + i + " / TOTAL SIZE OF artGroups[]: " + artGroups.length);
         let selectedArtGroup = artGroups[i];
         let data = convertArtGroupToPBTObject(selectedArtGroup);
         writeLine(data);
@@ -81,93 +59,86 @@ const writeArtGroupData = (writeLine, artGroups) => {
 
 const writeSphereData = (writeLine, spheres) => {
     for(let i = 0; i <= spheres.length - 1; i++) {
-        // console.log("COUNT: " + i + " / TOTAL SIZE OF spheres[]: " + spheres.length);
         let selectedSphere = spheres[i];
         let data = convertSphereDataToPBTObject(selectedSphere);
         writeLine(data);
     }
 }
 
+const createRigDataObject = (jsonObject) => {
+    let rigObject = {};
+    for (let i = 0; i < jsonObject.length; i++) {
+        let boneData = jsonObject[i];
+        let itemID = makeID();
+        rigObject[`${boneData.name}`] = {
+            "name": boneData.name,
+            "head": boneData.head,
+            "tail": boneData.tail,
+            "parent": boneData.parent,
+            "itemID": itemID
+        }
+        // set initial baseline locations
+        let locationDiffs = {"x": 0, "y": 0, "z": 0};
+        locationDiffs.x = (boneData.tail.x - boneData.head.x) * 10;
+        locationDiffs.y = (boneData.tail.y - boneData.head.y) * 10;
+        locationDiffs.z = (boneData.tail.z - boneData.head.z) * 10;
+        rigObject[`${boneData.name}`].locs = locationDiffs;
+    }
+    return rigObject;
+}
+
+const setRigLocations = (rigObject) => {
+    let rigObjectVals = Object.values(rigObject);
+    for (let i = 0; i < rigObjectVals.length; i++) {
+        let boneData = rigObject[`${rigObjectVals[i].name}`];
+        if (boneData.parent != null) {
+            let parentBone = rigObject[`${boneData.parent}`];
+            boneData.locs.x = (parentBone.head.x - boneData.head.x) * 10;
+            boneData.locs.y = (parentBone.head.y- boneData.head.y) * 10;
+            boneData.locs.z = (parentBone.head.z - boneData.head.z) * -10;
+        }
+    }
+    return rigObject;
+}
+
+const setRigChildren = (rigObject, jsonObject) => {
+    for (let i = 0; i < jsonObject.length; i++) {
+        let currentBone = jsonObject[i];
+        let childrenIDs = [];
+        let parentID = 0;
+        for (let j = 0; j < jsonObject.length; j++) {
+            let searchedBone = jsonObject[j];
+            if (searchedBone.parent == currentBone.name) {
+                childrenIDs.push(rigObject[`${searchedBone.name}`].itemID);
+            }
+            if (currentBone.parent == searchedBone.name) {
+                parentID = rigObject[`${searchedBone.name}`].itemID;
+            }
+        }
+        //calculate rotations
+        let theta_y = Math.atan2(currentBone.tail.z - currentBone.head.z, 1);
+        let degrees_y = (theta_y * 180) / Math.PI;
+        let theta_z = Math.atan2(currentBone.tail.y - currentBone.head.y, 1);
+        let degrees_z = (theta_z * 180) / Math.PI;
+        rigObject[`${currentBone.name}`].yRotation = degrees_z;
+        rigObject[`${currentBone.name}`].zRotation = degrees_y;
+        rigObject[`${currentBone.name}`].childrenIDs = childrenIDs;
+        rigObject[`${currentBone.name}`].parentID = parentID;
+    }
+    return rigObject;
+}
+
 async function convertJSON() {
     try {
         const jsonObject = await readJSONFile();
-        const rigObject = {};
+        let rigObject = createRigDataObject(jsonObject);
 
         let bones = [];
         let artGroups = [];
         let spheres = [];
 
-        // set up initial rigObject
-        for (let i = 0; i < jsonObject.length; i++) {
-            let boneData = jsonObject[i];
-            let itemID = makeID();
-
-            rigObject[`${boneData.name}`] = {
-                "name": boneData.name,
-                "head": boneData.head,
-                "tail": boneData.tail,
-                "parent": boneData.parent,
-                "itemID": itemID
-            }
-
-            // set initial baseline locations
-            let locationDiffs = {"x": 0, "y": 0, "z": 0};
-
-            locationDiffs.x = (boneData.tail.x - boneData.head.x) * 10;
-            locationDiffs.y = (boneData.tail.y - boneData.head.y) * 10;
-            locationDiffs.z = (boneData.tail.z - boneData.head.z) * 10;
-
-            rigObject[`${boneData.name}`].locs = locationDiffs;
-        }
-
-        //loop through rigObject bones and verify the locations based on parent bone tail location. If they don't match, fix locations
-        let rigObjectVals = Object.values(rigObject);
-
-        for (let i = 0; i < jsonObject.length; i++) {
-            let boneData = rigObject[`${rigObjectVals[i].name}`];
-
-            if (boneData.parent != null) {
-                let parentBone = rigObject[`${boneData.parent}`];
-                // if (parentBone.tail.x != boneData.head.x || parentBone.tail.y != boneData.head.y || parentBone.tail.z != boneData.head.z) {
-                //     boneData.locs.x = (parentBone.tail.x - boneData.head.x) * 10;
-                //     boneData.locs.y = (parentBone.tail.y- boneData.head.y) * 10;
-                //     boneData.locs.z = (parentBone.tail.z - boneData.head.z) * 10;
-                // }
-                    boneData.locs.x = (parentBone.head.x - boneData.head.x) * 10;
-                    boneData.locs.y = (parentBone.head.y- boneData.head.y) * 10;
-                    boneData.locs.z = (parentBone.head.z - boneData.head.z) * -10;
-            }
-        }
-
-        //loop through jsonObject again to grab children id's since its properly set up now
-        for (let i = 0; i < jsonObject.length; i++) {
-            let currentBone = jsonObject[i];
-            let childrenIDs = [];
-            let parentID = 0;
-            for (let j = 0; j < jsonObject.length; j++) {
-                let searchedBone = jsonObject[j];
-
-                if (searchedBone.parent == currentBone.name) {
-                    childrenIDs.push(rigObject[`${searchedBone.name}`].itemID);
-                }
-
-                if (currentBone.parent == searchedBone.name) {
-                    parentID = rigObject[`${searchedBone.name}`].itemID;
-                }
-            }
-
-            //calculate rotations
-            let theta_y = Math.atan2(currentBone.tail.z - currentBone.head.z, 1);
-            let degrees_y = (theta_y * 180) / Math.PI;
-
-            let theta_z = Math.atan2(currentBone.tail.y - currentBone.head.y, 1);
-            let degrees_z = (theta_z * 180) / Math.PI;
-
-            rigObject[`${currentBone.name}`].yRotation = degrees_z;
-            rigObject[`${currentBone.name}`].zRotation = degrees_y;
-            rigObject[`${currentBone.name}`].childrenIDs = childrenIDs;
-            rigObject[`${currentBone.name}`].parentID = parentID;
-        }
+        rigObject = setRigLocations(rigObject);
+        rigObject = setRigChildren(rigObject, jsonObject);
 
         let rigObjectValues = Object.values(rigObject);
 
@@ -212,30 +183,22 @@ async function convertJSON() {
 
 async function CreateFile(parentGroup, bones, artGroups, spheres) {
     try {
-
         let rigPBTFile = fs.createWriteStream(`${rigName}.pbt`, {
             flags: 'a'
         });
-
         const writeLine = (line) => rigPBTFile.write(`${line}`);
 
         let pbtInit = initializePBTFile(makeID(), parentGroup)
         writeLine(pbtInit);
-
         //loop through bones and add to file
         writeBoneData(writeLine, bones);
-
         //loop through art groups and add to file
         writeArtGroupData(writeLine, artGroups);
-
         //loop through spheres and add to file
         writeSphereData(writeLine, spheres);
-
         writeLine("    }\n"); // Close the ObjectBlock off
-
         let sphereAsset = addSphereAssetToPBT();
         writeLine(sphereAsset);
-
         let closing = closePBTFile();
         writeLine(closing);
     } catch(e) {
